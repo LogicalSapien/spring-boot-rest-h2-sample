@@ -3,4 +3,4 @@ Spring Boot Rest H2 Sample
 
 For instructions and details,  please visit :
 
-https://logicalsapien.com/spring-boot-sample-rest-api-application/
+https://logicalsapien.com/spring-boot-rest-api-crud-with-spring-data-h2/
