@@ -1,0 +1,67 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.0.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
+	id "org.sonarqube" version "2.7.1"
+	id "jacoco"
+}
+
+// For applying checkstyle configuration
+apply plugin: 'checkstyle'
+
+group = 'com.logicalsapien.sprintbooth2'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	runtimeOnly 'com.h2database:h2'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.2'
+
+	// https://mvnrepository.com/artifact/org.mockito/mockito-core
+	testCompile group: 'org.mockito', name: 'mockito-core', version: '3.1.0'
+
+	// https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
+	testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.1.0'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+		html.enabled true
+		csv.enabled false
+	}
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, excludes: ['**/com/logicalsapien/springbootrestsample/SpringBootRestSampleApplication**'])
+		}))
+	}
+}
+
+//For configuring checkstyle
+checkstyle {
+	toolVersion '8.26'
+	configFile file("config/checkstyle/checkstyle.xml")
+}
+
+//For configuring sonarqube
+sonarqube {
+	properties {
+		property "sonar.projectKey", "LogicalSapien_spring-boot-rest-sample"
+		property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+		property "sonar.coverage.exclusions", "src/main/java/com/logicalsapien/sprintbooth2/Sprintbooth2Application.java"
+	}
+}
