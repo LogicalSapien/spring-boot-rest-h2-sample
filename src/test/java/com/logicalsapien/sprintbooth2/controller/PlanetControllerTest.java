@@ -180,7 +180,8 @@ public class PlanetControllerTest {
     planet1.setName("Mercury");
     when(planetService.getPlanetByNameContaining("Mer"))
         .thenReturn(List.of(planet1));
-    MockHttpServletResponse response = mockMvc.perform(get("/planet/search1/Mer")
+    MockHttpServletResponse response
+        = mockMvc.perform(get("/planet/search1/Mer")
         .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
@@ -202,7 +203,8 @@ public class PlanetControllerTest {
     planet1.setName("Mercury");
     when(planetService.getPlanetByNameLike("Mer"))
         .thenReturn(List.of(planet1));
-    MockHttpServletResponse response = mockMvc.perform(get("/planet/search2/Mer")
+    MockHttpServletResponse response
+        = mockMvc.perform(get("/planet/search2/Mer")
         .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
