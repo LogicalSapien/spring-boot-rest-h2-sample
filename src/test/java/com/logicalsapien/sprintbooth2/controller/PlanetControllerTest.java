@@ -8,6 +8,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -102,7 +104,6 @@ public class PlanetControllerTest {
     when(planetService.savePlanet(any())).thenAnswer(
         invocation -> {
           Object[] args = invocation.getArguments();
-          System.out.println(args);
           Planet planetToSave = (Planet) args[0];
           planetToSave.setId(1L);
           return planetToSave;
@@ -120,6 +121,96 @@ public class PlanetControllerTest {
     assertThat(response.getContentAsString(),
         equalTo(getJsonFromObject(planet1)));
     verify(planetService, times(1)).savePlanet(any());
+  }
+
+  /**
+   * Update planet test.
+   * @throws Exception exception
+   */
+  @Test
+  @DisplayName("Update planet test")
+  public void updatePlanetByIdTest() throws Exception {
+    Planet planet1 = new Planet();
+    planet1.setName("Mercury");
+    planet1.setId(1L);
+    when(planetService.updatePlanetById(any(), any())).thenAnswer(
+        invocation -> {
+          Object[] args = invocation.getArguments();
+          Planet planetToSave = (Planet) args[1];
+          return planetToSave;
+        });
+    MockHttpServletResponse response = mockMvc.perform(put("/planet/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(getJsonFromObject(planet1))
+        .accept(MediaType.APPLICATION_JSON))
+        .andReturn().getResponse();
+
+    /* Assert */
+    assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(response.getContentAsString(),
+        equalTo(getJsonFromObject(planet1)));
+    verify(planetService, times(1)).updatePlanetById(any(), any());
+  }
+
+  /**
+   * Delete planet by id test.
+   * @throws Exception exception
+   */
+  @Test
+  @DisplayName("Delete planet by id test")
+  public void deletePlanetByIdTest() throws Exception {
+    MockHttpServletResponse response = mockMvc.perform(delete("/planet/1")
+        .accept(MediaType.APPLICATION_JSON))
+        .andReturn().getResponse();
+
+    /* Assert */
+    assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(response.getContentAsString(), equalTo("Success"));
+    verify(planetService, times(1)).deletePlanetById(1L);
+  }
+
+  /**
+   * Get Planet by name containing test.
+   * @throws Exception exception
+   */
+  @Test
+  @DisplayName("Get Planet by name containing test")
+  public void getPlanetByNameContainingTest() throws Exception {
+    Planet planet1 = new Planet();
+    planet1.setName("Mercury");
+    when(planetService.getPlanetByNameContaining("Mer"))
+        .thenReturn(List.of(planet1));
+    MockHttpServletResponse response = mockMvc.perform(get("/planet/search1/Mer")
+        .accept(MediaType.APPLICATION_JSON))
+        .andReturn().getResponse();
+
+    /* Assert */
+    assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(response.getContentAsString(),
+        equalTo(getJsonFromObject(List.of(planet1))));
+    verify(planetService, times(1)).getPlanetByNameContaining("Mer");
+  }
+
+  /**
+   * Get Planet by name like test.
+   * @throws Exception exception
+   */
+  @Test
+  @DisplayName("Get Planet by name like test")
+  public void getPlanetByNameLikeTest() throws Exception {
+    Planet planet1 = new Planet();
+    planet1.setName("Mercury");
+    when(planetService.getPlanetByNameLike("Mer"))
+        .thenReturn(List.of(planet1));
+    MockHttpServletResponse response = mockMvc.perform(get("/planet/search2/Mer")
+        .accept(MediaType.APPLICATION_JSON))
+        .andReturn().getResponse();
+
+    /* Assert */
+    assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(response.getContentAsString(),
+        equalTo(getJsonFromObject(List.of(planet1))));
+    verify(planetService, times(1)).getPlanetByNameLike("Mer");
   }
 
   /**
