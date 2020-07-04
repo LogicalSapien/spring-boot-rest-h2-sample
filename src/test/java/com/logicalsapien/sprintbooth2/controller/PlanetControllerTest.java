@@ -2,10 +2,12 @@ package com.logicalsapien.sprintbooth2.controller;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -62,8 +64,62 @@ public class PlanetControllerTest {
 
     /* Assert */
     assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
-    assertThat(response.getContentAsString(), equalTo(getJsonFromObject(List.of(planet1))));
-    verify(planetService,times(1)).getAllPlanets();
+    assertThat(response.getContentAsString(),
+        equalTo(getJsonFromObject(List.of(planet1))));
+    verify(planetService, times(1)).getAllPlanets();
+  }
+
+  /**
+   * Get planet by id test.
+   * @throws Exception exception
+   */
+  @Test
+  @DisplayName("Get planet by id test")
+  public void getPlanetByIdTest() throws Exception {
+    Planet planet1 = new Planet();
+    planet1.setName("Mercury");
+    when(planetService.getPlanetById(1L)).thenReturn(planet1);
+    MockHttpServletResponse response = mockMvc.perform(get("/planet/1")
+        .accept(MediaType.APPLICATION_JSON))
+        .andReturn().getResponse();
+
+    /* Assert */
+    assertThat(response.getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(response.getContentAsString(),
+        equalTo(getJsonFromObject(planet1)));
+    verify(planetService, times(1)).getPlanetById(1L);
+  }
+
+  /**
+   * Save planet test.
+   * @throws Exception exception
+   */
+  @Test
+  @DisplayName("Save planet test")
+  public void savePlanetTest() throws Exception {
+    Planet planet1 = new Planet();
+    planet1.setName("Mercury");
+    when(planetService.savePlanet(any())).thenAnswer(
+        invocation -> {
+          Object[] args = invocation.getArguments();
+          System.out.println(args);
+          Planet planetToSave = (Planet) args[0];
+          planetToSave.setId(1L);
+          return planetToSave;
+        });
+    MockHttpServletResponse response = mockMvc.perform(post("/planet")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(getJsonFromObject(planet1))
+        .accept(MediaType.APPLICATION_JSON))
+        .andReturn().getResponse();
+
+    /* Assert */
+    assertThat(response.getStatus(), equalTo(HttpStatus.CREATED.value()));
+    // update expected
+    planet1.setId(1L);
+    assertThat(response.getContentAsString(),
+        equalTo(getJsonFromObject(planet1)));
+    verify(planetService, times(1)).savePlanet(any());
   }
 
   /**
@@ -72,7 +128,8 @@ public class PlanetControllerTest {
    * @return Object as String
    * @throws JsonProcessingException throws JsonProcessingException
    */
-  private static  String getJsonFromObject(Object o) throws JsonProcessingException {
+  private static String getJsonFromObject(
+      final Object o) throws JsonProcessingException {
     ObjectMapper mapper = new ObjectMapper();
     mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     return mapper.writeValueAsString(o);
