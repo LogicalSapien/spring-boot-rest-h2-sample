@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
  * Planet Service Test.
  */
 @SpringBootTest
-public class PlanetServiceTest {
+class PlanetServiceTest {
 
   /**
    * Autowire PlanetService.

@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
  */
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = PlanetController.class)
-public class PlanetControllerTest {
+class PlanetControllerTest {
 
   /**
    * Mock Mvc.
@@ -56,7 +56,7 @@ public class PlanetControllerTest {
    */
   @Test
   @DisplayName("List all Planets test")
-  public void listAllPlanetsTest() throws Exception {
+  void listAllPlanetsTest() throws Exception {
     Planet planet1 = new Planet();
     planet1.setName("Mercury");
     when(planetService.getAllPlanets()).thenReturn(List.of(planet1));
@@ -77,7 +77,7 @@ public class PlanetControllerTest {
    */
   @Test
   @DisplayName("Get planet by id test")
-  public void getPlanetByIdTest() throws Exception {
+  void getPlanetByIdTest() throws Exception {
     Planet planet1 = new Planet();
     planet1.setName("Mercury");
     when(planetService.getPlanetById(1L)).thenReturn(planet1);
@@ -98,7 +98,7 @@ public class PlanetControllerTest {
    */
   @Test
   @DisplayName("Save planet test")
-  public void savePlanetTest() throws Exception {
+  void savePlanetTest() throws Exception {
     Planet planet1 = new Planet();
     planet1.setName("Mercury");
     when(planetService.savePlanet(any())).thenAnswer(
@@ -129,7 +129,7 @@ public class PlanetControllerTest {
    */
   @Test
   @DisplayName("Update planet test")
-  public void updatePlanetByIdTest() throws Exception {
+  void updatePlanetByIdTest() throws Exception {
     Planet planet1 = new Planet();
     planet1.setName("Mercury");
     planet1.setId(1L);
@@ -158,7 +158,7 @@ public class PlanetControllerTest {
    */
   @Test
   @DisplayName("Delete planet by id test")
-  public void deletePlanetByIdTest() throws Exception {
+  void deletePlanetByIdTest() throws Exception {
     MockHttpServletResponse response = mockMvc.perform(delete("/planet/1")
         .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
@@ -175,7 +175,7 @@ public class PlanetControllerTest {
    */
   @Test
   @DisplayName("Get Planet by name containing test")
-  public void getPlanetByNameContainingTest() throws Exception {
+  void getPlanetByNameContainingTest() throws Exception {
     Planet planet1 = new Planet();
     planet1.setName("Mercury");
     when(planetService.getPlanetByNameContaining("Mer"))
@@ -198,7 +198,7 @@ public class PlanetControllerTest {
    */
   @Test
   @DisplayName("Get Planet by name like test")
-  public void getPlanetByNameLikeTest() throws Exception {
+  void getPlanetByNameLikeTest() throws Exception {
     Planet planet1 = new Planet();
     planet1.setName("Mercury");
     when(planetService.getPlanetByNameLike("Mer"))
